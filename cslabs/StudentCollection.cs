@@ -5,17 +5,34 @@ using System.Linq;
 
 namespace cslabs
 {
-    class StudentCollection : IComparer<Student>
+    class StudentCollection<TKey> : IComparer<Student>
     {
-        private List<Student> students;
+        private Dictionary<TKey, Student> students;
+        private KeySelector<TKey> selector;
+
+        public StudentCollection(KeySelector<TKey> selector)
+        {
+            this.selector = selector;
+            this.students = new Dictionary<TKey, Student>();
+        }
+
         public void AddDefaults()
         {
-            this.students.Add(new Student());
+            for (int i = 0; i < 10; i++)
+            {
+
+                Student st = new Student(new Person(TestCollectionsold.RandomString(10), "test", DateTime.Now), Education.Specialist, 20);
+                this.students.Add(this.selector(st), st);
+            }
         }
         public void AddStudents(Student[] students)
         {
-            this.students.AddRange(students);
+            foreach (Student st in students)
+                this.students.Add(this.selector(st), st);
         }
+
+        public void Add(Student st) => this.students.Add(this.selector(st), st);
+
 
         public int Compare(Student a, Student b) => a.AverageMark.CompareTo(b.AverageMark);
 
@@ -23,51 +40,49 @@ namespace cslabs
         public override string ToString()
         {
             string result = "";
-            foreach (Student student in this.students)
+            foreach (KeyValuePair<TKey, Student> keyValuePair in this.students)
             {
-                result += student.ToString() + '\n';
+                result += keyValuePair.Value.ToString() + '\n';
             }
             return result;
         }
         public string ToShortString()
         {
             string result = "";
-            foreach (Student student in this.students)
+            foreach (KeyValuePair<TKey, Student> keyValuePair in this.students)
             {
-                result += student.ToShortString() + '\n';
+                result += keyValuePair.Value.ToShortString() + '\n';
             }
             return result;
         }
 
-        public void SortBySurname() => this.students.Sort((Student a, Student b) => a.CompareTo(b));
+        //public void SortBySurname() => this.students.Sort((Student a, Student b) => a.CompareTo(b));
 
-        public void SortByBirthDate() => this.students.Sort((Student a, Student b) => Compare(a, b));
+        //public void SortByBirthDate() => this.students.Sort((Student a, Student b) => Compare(a, b));
 
-        public void SortByAverageMark() => this.students.Sort((Student a, Student b) => this.Compare(a, b));
+        //public void SortByAverageMark() => this.students.Sort((Student a, Student b) => this.Compare(a, b));
 
         public double MaxAverargeMark
         {
             get
             {
-                return System.Linq.Enumerable.Max(this.students, (Student a) => a.AverageMark); ;
+                return this.students.Max((kv) => kv.Value.AverageMark);
             }
         }
-        public IEnumerable<Student> Specialists
+
+        public IEnumerable<KeyValuePair<TKey, Student>> EducationForm(Education value)
+        {
+            return this.students.Where((kv) => kv.Value[value]);
+        }
+
+        public IEnumerable<IGrouping<Education, KeyValuePair<TKey, Student>>> GroupByEducation
         {
             get
             {
-                return Enumerable.Where(this.students, (Student a) => a[Education.Specialist]);
+                return this.students.GroupBy((kv) => kv.Value.Edu);
             }
         }
 
-
-        //public List<Student> AverageMarkGroup(double value)
-        //{
-
-        //    var studentGroups = students.GroupBy(std => std.AverageMark == value);
-        //    return 
-
-        //}
 
     }
 }

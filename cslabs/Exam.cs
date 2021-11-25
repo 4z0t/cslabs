@@ -4,7 +4,7 @@ using System.Text;
 
 namespace cslabs
 {
-    class Exam : IDateAndCopy
+    class Exam : IDateAndCopy, IComparable , IComparer<Exam>
     {
         public string Subject { get; set; }
         public int Mark { get; set; }
@@ -21,5 +21,21 @@ namespace cslabs
         {
             return (object)new Exam(new string(this.Subject), this.Mark, new DateTime(this.Date.Ticks));
         }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+            Exam ex = obj as Exam;
+            if (ex != null)
+                return this.Subject.CompareTo(ex.Subject);
+            else
+                throw new ArgumentException("Object must be Exam");
+        }
+        public int Compare(Exam a, Exam b)
+        {
+            return a.Mark.CompareTo(b.Mark);
+        }
+
+
     }
 }

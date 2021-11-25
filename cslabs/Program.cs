@@ -11,38 +11,87 @@ namespace cslabs
     {
         static void Main(string[] args)
         {
-            //Person jane = new Person("Jane", "Smith", DateTime.Now);
-            //Person b = new Person();
-            //Console.WriteLine(jane.ToShortString());
-            //Console.WriteLine(b.ToShortString());
-            //Student st = new Student(jane, Education.Вachelor, 2);
-            //Exam[] ex = new Exam[4];
-            //ex[0] = new Exam("Maths", 4, DateTime.Now);
-            //ex[1] = new Exam("English", 5, DateTime.Now);
-            //ex[2] = new Exam("Physics", 3, DateTime.Now);
-            //ex[3] = new Exam("Chemistry", 4, DateTime.Now);
+            Person jane = new Person("Jane", "Smith", DateTime.Now);
+            Person b = new Person();
+            Console.WriteLine(jane.ToShortString());
+            Console.WriteLine(b.ToShortString());
+            Student st = new Student(jane, Education.Вachelor, 2);
+            Exam[] ex = {
+             new Exam("Maths", 4, DateTime.Now),
+             new Exam("English", 5, DateTime.Now),
+             new Exam("Physics", 3, DateTime.Now),
+             new Exam("Chemistry", 4, DateTime.Now),
+            };
+            st.AddExams(ex);
 
+            Console.WriteLine(st);
+            st.SortByDate();
+            Console.WriteLine(st);
+            st.SortByMark();
+            Console.WriteLine(st);
+            st.SortBySubject();
+            Console.WriteLine(st);
 
+          
+            Student st1 = new Student("Bruh", "Bruhson", DateTime.Now, Education.SecondEducation, 1);
+            Exam[] ex1 = {
+             new Exam("Maths", 3, DateTime.Now),
+             new Exam("English", 2, DateTime.Now),
+             new Exam("Physics", 5, DateTime.Now),
+             new Exam("Chemistry", 5, DateTime.Now),
+             new Exam("PE", 4, DateTime.Now),
+            };
+            st1.AddExams(ex1);
 
-            //st.AddExams(ex);
-            //st.AddExams(ex);
-            //Console.WriteLine(st);
-            //Person j = (Person)jane.DeepCopy();
+            Student st2 = new Student("Ez", "Pez", DateTime.Now, Education.Specialist, 1);
+            Exam[] ex2 = {
+             new Exam("Maths", 5, DateTime.Now),
+             new Exam("English", 5, DateTime.Now),
+             new Exam("Physics", 5, DateTime.Now),
+             new Exam("Chemistry", 5, DateTime.Now),
+             new Exam("PE", 5, DateTime.Now),
+            };
+            st2.AddExams(ex2);
 
-            //Console.WriteLine(((object)jane) == ((object)j));
-            //Console.WriteLine(((object)jane).Equals((object)j));
+            Student st3 = new Student("Kappa", "pride", DateTime.Now, Education.Specialist, 2);
+            Exam[] ex3 = {
+             new Exam("Maths", 3, DateTime.Now),
+             new Exam("English", 3, DateTime.Now),
+             new Exam("Physics", 4, DateTime.Now),
+             new Exam("Chemistry", 4, DateTime.Now),
+             new Exam("PE", 5, DateTime.Now),
+            };
+            st3.AddExams(ex3);
 
-            //Console.WriteLine(jane.GetHashCode());
-            //Console.WriteLine(j.GetHashCode());
-            //Console.WriteLine(jane);
-            //Console.WriteLine(b.GetHashCode());
+            StudentCollection<string> scs = new StudentCollection<string>(delegate (Student s)
+            {
+                return s.Stud.Name.GetHashCode().ToString();
+            });
+            scs.Add(st);
+            scs.Add(st1);
+            scs.Add(st2);
+            scs.Add(st3);
+            Console.WriteLine(scs);
+            Console.WriteLine(scs.MaxAverargeMark);
+            foreach (KeyValuePair<string, Student> kv in scs.EducationForm(Education.Specialist))
+                Console.WriteLine(kv.Value);
 
-            //Student newst = st.DeepCopy() as Student;
-            //Console.WriteLine(newst );
-            //Console.WriteLine(((object)newst) == ((object)st));
-            //newst.Group = 22;
-            TestCollectionsold tc = new TestCollectionsold(1000000);
+            foreach (IGrouping<Education,KeyValuePair< string, Student>> ig in scs.GroupByEducation)
+            {
+                Console.WriteLine(ig.Key);
+                foreach (KeyValuePair<string, Student> kv in ig)
+                    Console.WriteLine(kv.Value);
+            }
+
+            TestCollections<Person, Student> tc = new TestCollections<Person, Student>(10000000,
+            delegate (int j)
+                {
+                    Person per = new Person(TestCollectionsold.RandomString(10 + j % 10), TestCollectionsold.RandomString(10 + j % 10), DateTime.Now);
+                    Student sts = new Student(per, Education.Specialist, 20);
+                    return new KeyValuePair<Person, Student>(per, sts);
+                });
             tc.CalcTime();
+
 
 
         }

@@ -5,10 +5,11 @@ using System.Diagnostics;
 using System.Linq;
 
 
-delegate KeyValuePair<TKey, TValue> GenerateElement<TKey, TValue>(int j);
+
 
 namespace cslabs
 {
+    delegate KeyValuePair<TKey, TValue> GenerateElement<TKey, TValue>(int j);
     class TestCollections<TKey, TValue>
     {
 
@@ -18,7 +19,7 @@ namespace cslabs
         Dictionary<string, TValue> stringValues;
         GenerateElement<TKey, TValue> gen;
 
-        public TestCollections(int value, GenerateElement<TKey, TValue> generator )
+        public TestCollections(int value, GenerateElement<TKey, TValue> generator)
         {
             this.keys = new List<TKey>(value);
             this.gen = generator;
@@ -32,7 +33,7 @@ namespace cslabs
                 string s = RandomString(10);
                 this.keys.Add(pair.Key);
                 this.strings.Add(s);
-                this.keyValues.Add(pair.Key,pair.Value);
+                this.keyValues.Add(pair.Key, pair.Value);
                 this.stringValues.Add(s, pair.Value);
             }
         }
@@ -81,68 +82,68 @@ namespace cslabs
             sw.Start();
             this.keyValues.ContainsKey(this.keys[0]);
             sw.Stop();
-            Console.WriteLine("search first element in list of  key-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search first element's key in dict of  key-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
             sw.Start();
             this.keyValues.ContainsKey(this.keys[this.keys.Count / 2]);
             sw.Stop();
-            Console.WriteLine("search middle element in list of  key-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search middle element's key in dict of  key-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
             sw.Start();
             this.keyValues.ContainsKey(this.keys.Last());
             sw.Stop();
-            Console.WriteLine("search last element in list of  key-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search last element's key in dict of  key-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
 
 
             sw.Start();
             this.keyValues.ContainsValue(this.keyValues[this.keys[0]]);
             sw.Stop();
-            Console.WriteLine("search first element in list of  key-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search first element's value in dict of  key-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
             sw.Start();
             this.keyValues.ContainsValue(this.keyValues[this.keys[this.keys.Count / 2]]);
             sw.Stop();
-            Console.WriteLine("search middle element in list of  key-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search middle element's value in dict of key-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
             sw.Start();
             this.keyValues.ContainsValue(this.keyValues[this.keys.Last()]);
             sw.Stop();
-            Console.WriteLine("search last element in list of  key-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search last element's value in dict of  key-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
 
-            Console.WriteLine("Total count of key elements in string-value: " + this.stringValues.Count);
+            Console.WriteLine("Total count of key elements in  string-value: " + this.stringValues.Count);
             sw.Start();
             this.stringValues.ContainsKey(this.strings[0]);
             sw.Stop();
-            Console.WriteLine("search first element in list of string-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search first element's key in dict of string-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
             sw.Start();
             this.stringValues.ContainsKey(this.strings[this.strings.Count / 2]);
             sw.Stop();
-            Console.WriteLine("search middle element in list of string-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search middle element's key in dict of string-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
             sw.Start();
             this.stringValues.ContainsKey(this.strings.Last());
             sw.Stop();
-            Console.WriteLine("search last element in list of string-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search last element's key in dict of string-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
 
             //Console.WriteLine("Total count of value elements in name-student: " + this.keys.Count);
             sw.Start();
             this.stringValues.ContainsValue(this.keyValues[this.keys[0]]);
             sw.Stop();
-            Console.WriteLine("search first element in list of string-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search first element's value in dict of string-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
             sw.Start();
             this.stringValues.ContainsValue(this.keyValues[this.keys[this.keys.Count / 2]]);
             sw.Stop();
-            Console.WriteLine("search middle element in list of string-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search middle element's value in dict of string-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
             sw.Start();
             this.stringValues.ContainsValue(this.keyValues[this.keys.Last()]);
             sw.Stop();
-            Console.WriteLine("search last element in list of string-value: " + sw.ElapsedMilliseconds);
+            Console.WriteLine("search last element's value in dict of string-value: " + sw.ElapsedMilliseconds);
             sw.Reset();
 
         }

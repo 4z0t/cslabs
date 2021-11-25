@@ -5,13 +5,14 @@ using System.Text;
 
 namespace cslabs
 {
-    class Student : Person, IDateAndCopy,IEnumerable
+    delegate TKey KeySelector<TKey>(Student st);
+    class Student : Person, IDateAndCopy, IEnumerable
     {
         //private class StudentEnumerator:IEnumerable
         //{
         //    public IEnumerator GetEnumerator()
         //    {
-               
+
         //        for()
         //    }
         //}
@@ -21,17 +22,23 @@ namespace cslabs
         private List<Test> tests;
         private List<Exam> exams;
 
-        
+
         public Student(Person student, Education edu, int group) : base(student)
         {
-
             this.edu = edu;
             this.group = group;
             this.exams = new List<Exam>(0);
             this.tests = new List<Test>(0);
-
-
         }
+
+        public Student(string name, string surname, DateTime birthdate, Education edu, int group) : base(name, surname, birthdate)
+        {
+            this.edu = edu;
+            this.group = group;
+            this.exams = new List<Exam>(0);
+            this.tests = new List<Test>(0);
+        }
+
 
         public Student() : this(new Person(), Education.Вachelor, 0) { }
         public Person Stud
@@ -101,7 +108,7 @@ namespace cslabs
         public override string ToString()
         {
 
-            string result = string.Format("{0}: {1} {2}", base.ToShortString(), this.group, this.edu);
+            string result = string.Format("{0}: {1} {2}\n", base.ToShortString(), this.group, this.edu);
             foreach (Exam ex in this.exams)
                 result += ex + "\n";
             foreach (Test tst in this.tests)
@@ -120,8 +127,20 @@ namespace cslabs
 
         }
 
-         
+        public void SortBySubject()
+        {
+            this.exams.Sort((ex1, ex2) => ex1.Subject.CompareTo(ex2.Subject));
+        }
 
+        public void SortByMark()
+        {
+            this.exams.Sort((ex1, ex2) => ex1.Mark.CompareTo(ex2.Mark));
+        }
+
+        public void SortByDate()
+        {
+            this.exams.Sort((ex1, ex2) => ex1.Date.CompareTo(ex2.Date));
+        }
         public override object DeepCopy()
         {
             Student result = new Student(base.DeepCopy() as Person, this.edu, this.group)
