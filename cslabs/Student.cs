@@ -2,26 +2,25 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Text;
+using System.ComponentModel;
 
 namespace cslabs
 {
     delegate TKey KeySelector<TKey>(Student st);
-    class Student : Person, IDateAndCopy, IEnumerable
+    class Student : Person, IDateAndCopy, IEnumerable, INotifyPropertyChanged
     {
-        //private class StudentEnumerator:IEnumerable
-        //{
-        //    public IEnumerator GetEnumerator()
-        //    {
-
-        //        for()
-        //    }
-        //}
-        //private Person student;
+        
         private Education edu;
         private int group;
         private List<Test> tests;
         private List<Exam> exams;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnHandleEvent(string propName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
 
         public Student(Person student, Education edu, int group) : base(student)
         {
@@ -49,9 +48,10 @@ namespace cslabs
                 this.name = value.Name;
                 this.surname = value.Surname;
                 this.birthdate = value.Birthdate;
+                OnHandleEvent("Stud");
             }
         }
-        public Education Edu { get { return this.edu; } set { this.edu = value; } }
+        public Education Edu { get { return this.edu; } set { this.edu = value; OnHandleEvent("Edu"); } }
         public int Group
         {
             get { return this.group; }
@@ -62,7 +62,7 @@ namespace cslabs
                 this.group = value;
             }
         }
-        public List<Exam> Exams { get { return this.exams; } set { this.exams = value; } }
+        public List<Exam> Exams { get { return this.exams; } set { this.exams = value; OnHandleEvent("Exams"); } }
 
         public double AverageMark
         {
@@ -88,6 +88,7 @@ namespace cslabs
         public void AddExams(Exam[] exams)
         {
             this.exams.AddRange(exams);
+            OnHandleEvent("exams");
         }
 
         public IEnumerable GetExams(int mark)

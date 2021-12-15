@@ -2,13 +2,46 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.ComponentModel;
+
+
+
 
 namespace cslabs
 {
     class StudentCollection<TKey> : IComparer<Student>
     {
+
         private Dictionary<TKey, Student> students;
         private KeySelector<TKey> selector;
+        public string Name { get; set; }
+
+        private void HandleEvent(object obj, EventArgs e)
+        {
+            var it = (PropertyChangedEventArgs)e;
+            var st = (Student)obj;
+            var key = selector(st);
+            StudentPropertyChanged(Action.Property, it.PropertyName, key);
+        }
+
+        private void StudentPropertyChanged(Action action, string name, TKey key)
+        {
+            StudentsChanged?.Invoke(this, new StudentsChangedEventArgs<TKey>(Name, action, name, key));
+        }
+
+        public bool Remove(Student st)
+        {
+            if (students.ContainsValue(st))
+            {
+                var key = students.FirstOrDefault(x => x.Value == st).Key;
+                StudentPropertyChanged(Action.Remove, "----", key);
+                st.PropertyChanged -= HandleEvent;
+                return students.Remove(key);
+            }
+            return false;
+        }
+
+        public StudentsChangedHandler<TKey> StudentsChanged;
 
         public StudentCollection(KeySelector<TKey> selector)
         {
@@ -31,7 +64,12 @@ namespace cslabs
                 this.students.Add(this.selector(st), st);
         }
 
-        public void Add(Student st) => this.students.Add(this.selector(st), st);
+        public void Add(Student st) {
+            var key = this.selector(st);
+            this.students.Add(key, st);
+            StudentPropertyChanged(Action.Add, "----", key);
+            st.PropertyChanged += HandleEvent;
+        }
 
 
         public int Compare(Student a, Student b) => a.AverageMark.CompareTo(b.AverageMark);

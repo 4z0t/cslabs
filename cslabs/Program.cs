@@ -11,6 +11,7 @@ namespace cslabs
     {
         static void Main(string[] args)
         {
+
             Person jane = new Person("Jane", "Smith", DateTime.Now);
             Person b = new Person();
             Console.WriteLine(jane.ToShortString());
@@ -63,37 +64,32 @@ namespace cslabs
             };
             st3.AddExams(ex3);
 
+            Journal journal = new Journal();
             StudentCollection<string> scs = new StudentCollection<string>(delegate (Student s)
             {
                 return s.Stud.Name.GetHashCode().ToString();
             });
+            scs.Name = "scs";
+            scs.StudentsChanged += journal.StudentsChanged;
+
+            StudentCollection<string> scs1 = new StudentCollection<string>(delegate (Student s)
+            {
+                return s.Stud.Name.GetHashCode().ToString();
+            });
+            scs1.Name = "scs1";
+            scs1.StudentsChanged += journal.StudentsChanged;
             scs.Add(st);
             scs.Add(st1);
             scs.Add(st2);
+            scs.Remove(st2);
             scs.Add(st3);
-            Console.WriteLine(scs);
-            Console.WriteLine(scs.MaxAverargeMark);
-            foreach (KeyValuePair<string, Student> kv in scs.EducationForm(Education.Specialist))
-                Console.WriteLine(kv.Value);
+            scs1.Add(st);
+            scs1.Add(st3);
+            scs1.Remove(st);
 
-            foreach (IGrouping<Education,KeyValuePair< string, Student>> ig in scs.GroupByEducation)
-            {
-                Console.WriteLine(ig.Key);
-                foreach (KeyValuePair<string, Student> kv in ig)
-                    Console.WriteLine(kv.Value);
-            }
+            st.Edu = Education.SecondEducation;
 
-            TestCollections<Person, Student> tc = new TestCollections<Person, Student>(10000000,
-            delegate (int j)
-                {
-                    Person per = new Person(TestCollectionsold.RandomString(10 + j % 10), TestCollectionsold.RandomString(10 + j % 10), DateTime.Now);
-                    Student sts = new Student(per, Education.Specialist, 20);
-                    return new KeyValuePair<Person, Student>(per, sts);
-                });
-            tc.CalcTime();
-
-
-
+            Console.WriteLine(journal);
         }
     }
 }
