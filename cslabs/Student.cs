@@ -182,7 +182,71 @@ namespace cslabs
 
         public bool AddFromConsole()
         {
-            //TODO:
+            var exam = new Exam();
+            Console.WriteLine("Adding new Exam for Student:");
+            Console.WriteLine("Type in subject name:");
+            exam.Subject = Console.ReadLine();
+            int res;
+            do
+            {
+                Console.WriteLine("Type Mark for that exam:");
+                if (!int.TryParse(Console.ReadLine(), out res) && res > 0 && res < 6)
+                {
+                    Console.WriteLine("Incorrect value");
+                    continue;
+                }
+                break;
+            }
+            while (true);
+
+            exam.Mark = res;
+            int year, month, day;
+            do
+            {
+                Console.WriteLine("Type year of that exam:");
+                if (!int.TryParse(Console.ReadLine(), out year))
+                {
+                    Console.WriteLine("Incorrect value");
+                    continue;
+                }
+                break;
+            }
+            while (true);
+
+            do
+            {
+                Console.WriteLine("Type month of that exam:");
+                if (!int.TryParse(Console.ReadLine(), out month))
+                {
+                    Console.WriteLine("Incorrect value");
+                    continue;
+                }
+                break;
+            }
+            while (true);
+            do
+            {
+                Console.WriteLine("Type day of that exam:");
+                if (!int.TryParse(Console.ReadLine(), out day))
+                {
+                    Console.WriteLine("Incorrect value");
+                    continue;
+                }
+                break;
+            }
+            while (true);
+
+            try
+            {
+                DateTime dt = new DateTime(year, month, day);
+                exam.Date = dt;
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+            this.exams.Add(exam);
             return true;
         }
 

@@ -4,6 +4,7 @@ using System.Text;
 
 namespace cslabs 
 {
+    [Serializable]
     class Person : IDateAndCopy,IComparable,IComparer<Person>
     {
         protected string name;
