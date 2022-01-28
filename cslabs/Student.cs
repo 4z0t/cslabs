@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+
 
 namespace cslabs
 {
     delegate TKey KeySelector<TKey>(Student st);
+    [Serializable]
     class Student : Person, IDateAndCopy, IEnumerable, INotifyPropertyChanged
     {
-        
+
         private Education edu;
         private int group;
         private List<Test> tests;
@@ -144,22 +149,87 @@ namespace cslabs
         }
         public override object DeepCopy()
         {
-            Student result = new Student(base.DeepCopy() as Person, this.edu, this.group)
-            {
-                exams = new List<Exam>(this.exams.Count),
-                tests = new List<Test>(this.tests.Count)
-            };
-            foreach (Exam ex in this.exams)
-                result.exams.Add(ex.DeepCopy() as Exam);
 
-            foreach (Test test in this.tests)
-                result.tests.Add(test.DeepCopy() as Test);
-            return result;
+            MemoryStream memoryStream = new MemoryStream();
+            IFormatter formatter = new BinaryFormatter();
+            try
+            {
+                formatter.Serialize(memoryStream, this);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                return formatter.Deserialize(memoryStream) as Student;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
 
         public override string ToShortString()
         {
             return string.Format("{0}: {1} {2} {3}", base.ToShortString(), this.group, this.edu, this.AverageMark);
         }
+
+        public bool Save(string filename)
+        {
+            return Save(filename, this);
+        }
+
+        public bool Load(string filename)
+        {
+            return Load(filename, this);
+        }
+
+        public bool AddFromConsole()
+        {
+            //TODO:
+            return true;
+        }
+
+        public static bool Save(string filename, Student obj)
+        {
+            try
+            {
+                IFormatter formatter = new BinaryFormatter();
+                using (FileStream stream = new FileStream(filename, FileMode.OpenOrCreate))
+                {
+                    formatter.Serialize(stream, obj);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+
+        }
+        public static bool Load(string filename, Student obj)
+        {
+            try
+            {
+                IFormatter formatter = new BinaryFormatter();
+                using (FileStream stream = new FileStream(filename, FileMode.OpenOrCreate))
+                {
+                    Student st = formatter.Deserialize(stream) as Student;
+                    obj.name = st.name;
+                    obj.surname = st.surname;
+                    obj.birthdate = st.birthdate;
+                    obj.edu = st.edu;
+                    obj.exams = st.exams;
+                    obj.tests = st.tests;
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
+
+
+
     }
 }
