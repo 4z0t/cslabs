@@ -4,6 +4,7 @@ using System.Text;
 
 namespace cslabs
 {
+    [Serializable]
     class Exam : IDateAndCopy, IComparable , IComparer<Exam>
     {
         public string Subject { get; set; }

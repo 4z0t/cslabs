@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
+using System.IO;
 
 
 
@@ -13,9 +15,6 @@ namespace cslabs
         {
 
             Person jane = new Person("Jane", "Smith", DateTime.Now);
-            Person b = new Person();
-            Console.WriteLine(jane.ToShortString());
-            Console.WriteLine(b.ToShortString());
             Student st = new Student(jane, Education.Вachelor, 2);
             Exam[] ex = {
              new Exam("Maths", 4, DateTime.Now),
@@ -24,72 +23,49 @@ namespace cslabs
              new Exam("Chemistry", 4, DateTime.Now),
             };
             st.AddExams(ex);
-
+            Student stCopy = st.DeepCopy() as Student;
+            Console.WriteLine("Original:");
             Console.WriteLine(st);
-            st.SortByDate();
-            Console.WriteLine(st);
-            st.SortByMark();
-            Console.WriteLine(st);
-            st.SortBySubject();
-            Console.WriteLine(st);
+            Console.WriteLine("DeepCopy:");
+            Console.WriteLine(stCopy);
+            Console.WriteLine("Enter filename");
+            var fileName = Console.ReadLine();
+            var workingDir = Environment.CurrentDirectory;
+            var projectDir = Directory.GetParent(workingDir).Parent.Parent.FullName;
+            fileName = projectDir + "/" + fileName;
 
-          
-            Student st1 = new Student("Bruh", "Bruhson", DateTime.Now, Education.SecondEducation, 1);
-            Exam[] ex1 = {
-             new Exam("Maths", 3, DateTime.Now),
-             new Exam("English", 2, DateTime.Now),
-             new Exam("Physics", 5, DateTime.Now),
-             new Exam("Chemistry", 5, DateTime.Now),
-             new Exam("PE", 4, DateTime.Now),
-            };
-            st1.AddExams(ex1);
-
-            Student st2 = new Student("Ez", "Pez", DateTime.Now, Education.Specialist, 1);
-            Exam[] ex2 = {
-             new Exam("Maths", 5, DateTime.Now),
-             new Exam("English", 5, DateTime.Now),
-             new Exam("Physics", 5, DateTime.Now),
-             new Exam("Chemistry", 5, DateTime.Now),
-             new Exam("PE", 5, DateTime.Now),
-            };
-            st2.AddExams(ex2);
-
-            Student st3 = new Student("Kappa", "pride", DateTime.Now, Education.Specialist, 2);
-            Exam[] ex3 = {
-             new Exam("Maths", 3, DateTime.Now),
-             new Exam("English", 3, DateTime.Now),
-             new Exam("Physics", 4, DateTime.Now),
-             new Exam("Chemistry", 4, DateTime.Now),
-             new Exam("PE", 5, DateTime.Now),
-            };
-            st3.AddExams(ex3);
-
-            Journal journal = new Journal();
-            StudentCollection<string> scs = new StudentCollection<string>(delegate (Student s)
+            FileInfo file = new FileInfo(fileName);
+            if (file.Exists)
             {
-                return s.Stud.Name.GetHashCode().ToString();
-            });
-            scs.Name = "scs";
-            scs.StudentsChanged += journal.StudentsChanged;
-
-            StudentCollection<string> scs1 = new StudentCollection<string>(delegate (Student s)
+                Console.WriteLine("Loading existing file");
+                st.Load(fileName);
+            }
+            else
             {
-                return s.Stud.Name.GetHashCode().ToString();
-            });
-            scs1.Name = "scs1";
-            scs1.StudentsChanged += journal.StudentsChanged;
-            scs.Add(st);
-            scs.Add(st1);
-            scs.Add(st2);
-            scs.Remove(st2);
-            scs.Add(st3);
-            scs1.Add(st);
-            scs1.Add(st3);
-            scs1.Remove(st);
+                Console.WriteLine("New file created");
+                File.Create(fileName).Close();
+            }
 
-            st.Edu = Education.SecondEducation;
 
-            Console.WriteLine(journal);
+
+
+
+
+            Console.WriteLine(st);
+
+
+
+            st.AddFromConsole();
+            st.Save(fileName);
+
+            Console.WriteLine(st);
+
+
+
+            Student.Load(fileName, st);
+            st.AddFromConsole();
+            Student.Save(fileName, st);
+            Console.WriteLine(st);
         }
     }
 }

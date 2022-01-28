@@ -4,6 +4,7 @@ using System.Text;
 
 namespace cslabs
 {
+    [Serializable]
     class Test
     {
         public string Subject { get; set; }
